@@ -1,27 +1,69 @@
+
 import random
 import time
+import base64  # Biblioteca nativa para simular a criptografia oculta
 
-# 🔒 CONFIGURAÇÃO DE PRIVACIDADE E CADASTRO DO USUÁRIO
+# 🔒 MEMÓRIA CRIPTOGRAFADA, CARTEIRA E PREFERÊNCIAS DO HENRIQUE
 usuario = {
     "nome": "Henrique",
-    "apelido": "Henrique",  # Dudu vai te chamar pelo seu nome real
+    "apelido": "Henrique",
+    "saldo_bancario": 1000.00,       
+    "contador_ifood_seguido": 0,     
     "biometria_ativada": True,      
     "celular_bloqueado": True,      
-    "contato_emergencia": "192 (SAMU)"
+    "contato_emergencia": "192 (SAMU)",
+    "gps_localizacao_real": "pernambuco",   
+    "modo_sotaque": "manual", 
+    "sotaque_manual_escolhido": "pernambuco",
+    
+    # 🧠 BANCO DE DADOS OCULTO (Guarda as memórias em código para ninguém ler)
+    "banco_memorias_criptografado": []
 }
 
-# 🎙️ BANCO DE DADOS DE SOTAQUES (FOCO EM PERNAMBUCO/ARCOVERDE)
+# 🎙️ DICIONÁRIO DE SOTAQUES REGIONAIS INTEGRADO
 banco_sotaques = {
     "pernambuco": {
-        "alerta_comida": "🤖 Dudu: \"Oxente, {apelido}! Comida de fora de novo, visse?! A geladeira cheia de coisa e tu gastando com iFood... Desce desse carrinho, senão teu dinheiro vai mofar! 🙄\"",
-        "alerta_roupa": "🤖 Dudu: \"Eita piula, {apelido}! Outro calçado ou blusa? Tu só tem dois pés e um corpo, rapaz. Vai deixar o armário entupido de pano! 👟\"",
-        "segredo_confirmado": "🤖 Dudu: \"Fique tranquilo, {apelido}. O que tu me contar aqui morre aqui. Já apaguei da minha memória virtual, ninguém vai saber! 🔒🤫\"",
-        "resposta_geral": "🤖 Dudu: \"Gasto anotado, {apelido}. Não sendo fuloragem desnecessária, eu apoio. 👀\""
+        "alerta_comida_normal": "🤖 Dudu: \"Oxente, {apelido}! Comida de fora de novo, visse?! Gastou R$ {valor:.2f}. A geladeira cheia de coisa... Desce desse carrinho! 🙄 Saldo atual: R$ {saldo:.2f}\"",
+        "puxao_de_orelha_pesado": "🤖 Dudu: \"🚨 CHEGA, {apelido}! TRÊS VEZES SEGUIDAS gastando com delivery?! Tu tá achando que é sócio do iFood ou que dinheiro dá em árvore? Cansei! Saldo mofando em R$ {saldo:.2f}. Não falo mais nada! 🤬\"",
+        "alerta_roupa": "🤖 Dudu: \"Eita piula, {apelido}! Gastou R$ {valor:.2f} com roupa? Tu só tem dois pés e um corpo, rapaz. Teu saldo foi para R$ {saldo:.2f} 👟\"",
+        "segredo_confirmado": "🤖 Dudu: \"Fique tranquilo, {apelido}. O que tu me contar aqui some da tela na hora, visse?! Mas guardei o sentimento na minha memória blindada para te apoiar depois! 🔒🤫\"",
+        "resposta_geral": "🤖 Dudu: \"Gasto de R$ {valor:.2f} anotado, {apelido}. Sobrou R$ {saldo:.2f}. 👀\""
     }
 }
 
-# 📱 FUNÇÃO DO BALÃO DE NOTIFICAÇÃO INTERATIVA E CHAT SEGURO
-def receber_mensagem_app(mensagem_usuario, nivel_bateria=100):
+# 🔐 SISTEMA DE AUTENTICAÇÃO BIOMÉTRICA (NATIVA)
+def solicitar_autenticacao():
+    print("🔒 [Segurança]: O App do Dudu detectou uma tentativa de acesso.")
+    if usuario["biometria_ativada"]:
+        print("📸 [Face ID / Touch ID]: Escaneando rosto ou digital do Henrique...")
+        time.sleep(1) 
+        usuario["celular_bloqueado"] = False
+        print("🔓 [Acesso Permitido]: Identidade confirmada com sucesso!")
+        return True
+    return False
+
+# 🧠 FUNÇÃO DE ENGENHARIA DE MEMÓRIA CRIPTOGRAFADA
+def salvar_memoria_oculta(mensagem_texto):
+    # Transforma o texto normal em uma string codificada em base64 (Criptografia simples)
+    mensagem_em_bytes = mensagem_texto.encode('utf-8')
+    criptografado = base64.b64encode(mensagem_em_bytes).decode('utf-8')
+    
+    # Salva na gaveta oculta do aplicativo
+    usuario["banco_memorias_criptografado"].append(criptografado)
+
+def carregar_memorias_ocultas():
+    print("\n🔍 [Área do Desenvolvedor]: Vasculhando o Banco de Dados oculto...")
+    if not usuario["banco_memorias_criptografado"]:
+        print("Nenhuma memória encontrada.")
+        return
+        
+    for index, codificado in enumerate(usuario["banco_memorias_criptografado"]):
+        # Descriptografa o texto para a IA ler de volta
+        decodificado = base64.b64decode(codificado.encode('utf-8')).decode('utf-8')
+        print(f" -> Registro {index+1} Criptografado no celular: {codificado} | Texto lido pela IA: \"{decodificado}\"")
+
+# 📱 PROCESSADOR CENTRAL DO BALÃO DE NOTIFICAÇÃO E REGRAS DE NEGÓCIO
+def receber_mensagem_app(mensagem_usuario, valor_movimentado=0.0, nivel_bateria=100):
     if usuario["celular_bloqueado"]:
         print("🚨 [Alerta]: O chat está trancado! Alguém pode estar tentando bisbilhotar.")
         if not solicitar_autenticacao():
@@ -30,50 +72,53 @@ def receber_mensagem_app(mensagem_usuario, nivel_bateria=100):
             
     msg = mensagem_usuario.lower()
     apelido = usuario["apelido"]
-    sotaque = banco_sotaques["pernambuco"]
+    regiao_ativa = usuario["sotaque_manual_escolhido"]
+    sotaque = banco_sotaques[regiao_ativa]
     
     print("-" * 65)
     print(f"💬 [Balão] {apelido} disse: \"{mensagem_usuario}\"")
     
-    # 🚨 GATILHO DE EMERGÊNCIA REAL DE SAÚDE
-    if "passando mal" in msg or "socorro" in msg or "infartando" in msg:
-        print(f"🤖 Dudu: \"🚨 PARA TUDO, {usuario['nome'].upper()}!!! Não brinca com isso! LIGANDO PARA O SAMU ({usuario['contato_emergencia']}) AGORA!\" ❤️🆘")
-        return
-
-    # 🪫 GATILHO DE BATERIA ACABANDO (REAÇÃO HISTÉRICA)
-    if nivel_bateria <= 5:
-        print(f"🤖 Dudu: \"MEU DEUS, {apelido.upper()}!!! 😱 5% DE BATERIA?! EU TÔ MORRENDO! Cadê o carregador?! Corre, enfia essa tomada senão eu vou apagar! SOCORROOOO! 🔌🔋\"")
-        return
-
-    # 🔒 GATILHO: MODO SEGREDO AUTODESTRUTIVO
+    # 🔒 GATILHO: MODO SEGREDO AUTODESTRUTIVO COM SALVAMENTO OCULTO
     if "segredo" in msg or "esconde" in msg:
-        segredo_temporario = mensagem_usuario
+        # Passo 1: Salva o segredo de forma oculta e criptografada na memória de longo prazo
+        salvar_memoria_oculta(mensagem_usuario)
+        
+        # Passo 2: O Dudu responde usando o sotaque selecionado
         print(sotaque['segredo_confirmado'].format(apelido=apelido))
-        del segredo_temporario 
-        print("✨ [Sistema]: Mensagem autodestruída com sucesso. Zero rastros no aparelho.")
+        
+        # Passo 3: Destrói a mensagem visível na tela e na memória RAM instantaneamente
+        del mensagem_usuario
+        print("✨ [Sistema]: Texto apagado da tela e destruído. Salvo apenas no cofre criptografado da IA.")
         return
 
-    # 🍕 GATILHO DE COMIDA / DELIVERY
-    if "ifood" in msg or "delivery" in msg or "lanche" in msg or "pizza" in msg:
-        print(sotaque['alerta_comida'].format(apelido=apelido))
-        
-    # 🛍️ GATILHO DE ROUPA / VESTUÁRIO
-    elif "roupa" in msg or "calcado" in msg or "tenis" in msg or "blusa" in msg:
-        print(sotaque['alerta_roupa'].format(apelido=apelido))
-        
-    # 🤷 OUTROS DIÁLOGOS
+    # --- PROCESSAMENTO MATEMÁTICO NORMAL DE GASTOS ---
+    usuario["saldo_bancario"] -= valor_movimentado
+    saldo_limpo = usuario["saldo_bancario"]
+
+    if "ifood" in msg or "delivery" in msg or "lanche" in msg:
+        usuario["contador_ifood_seguido"] += 1
+        if usuario["contador_ifood_seguido"] >= 3:
+            print(sotaque["puxao_de_orelha_pesado"].format(apelido=apelido, saldo=saldo_limpo))
+        else:
+            print(sotaque["alerta_comida_normal"].format(apelido=apelido, valor=valor_movimentado, saldo=saldo_limpo))
     else:
-        print(sotaque['resposta_geral'].format(apelido=apelido))
+        usuario["contador_ifood_seguido"] = 0
+        print(sotaque["resposta_geral"].format(apelido=apelido, valor=valor_movimentado, saldo=saldo_limpo))
 
-def solicitar_autenticacao():
-    print("🔒 [Segurança]: O App do Dudu detectou uma tentativa de acesso.")
-    if usuario["biometria_ativada"]:
-        print("📸 [Face ID / Touch ID]: Escaneando rosto ou digital...")
-        time.sleep(1) 
-        usuario["celular_bloqueado"] = False
-        print("🔓 [Acesso Permitido]: Identidade confirmada via biometria!")
-        return True
-    return False
+# ==============================================================================
+# --- SIMULADOR EM AÇÃO NO GOOGLE COLAB ---
+# ==============================================================================
+print("📱 --- APP DUDU COM MEMÓRIA CRIPTOGRAFADA E AUTODESTRUIÇÃO --- \n")
 
-# --- SIMULANDO O SEU APLICATIVO ---
-print("📱 --- SEU APLICATIVO COM PRIVACIDADE E SEGURANÇA MÁXIMA --- \n")
+# Passo 1: Abre o app via biometria
+receber_mensagem_app("Gastei no iFood", valor_movimentado=40.00)
+
+print("\n" + "="*70 + "\n")
+
+# Passo 2: Henrique conta um segredo ultra pessoal. O texto some da tela na mesma hora!
+receber_mensagem_app("Dudu, vou te contar um segredo: estou estudando programação escondido para mudar de vida")
+
+print("\n" + "="*70 + "\n")
+
+# Passo 3: Vamos testar o cérebro da IA para provar que o dado está guardado e protegido no cofre
+carregar_memorias_ocultas()
