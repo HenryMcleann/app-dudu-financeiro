@@ -1,4 +1,7 @@
 # 🤖 App Dudu Financeiro - Assistente Virtual com Inteligência Emocional
+<p align="center">
+  <img src="dudu.png" width="300" alt="Robô Dudu">
+</p>
 
 Este é o repositório do **Dudu**, um protótipo de aplicativo de controle de gastos e companheirismo virtual focado em privacidade, segurança e alta retenção de usuários através de gamificação por afeto. 
 
